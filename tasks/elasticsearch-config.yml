@@ -15,15 +15,11 @@
 - set_fact: instance_sysd_script={{sysd_script | dirname }}/{{es_instance_name}}_{{sysd_script | basename}}
   when: use_system_d
 
-#For directories we also use the {{inventory_hostname}}-{{ es_instance_name }} - this helps if we have a shared SAN.
+- set_fact: pid_dir={{ es_pid_dir }}/{{es_instance_name}}
 
-- set_fact: instance_suffix={{inventory_hostname}}-{{ es_instance_name }}
+- set_fact: log_dir={{ es_log_dir }}/{{es_instance_name}}
 
-- set_fact: pid_dir={{ es_pid_dir }}/{{instance_suffix}}
-
-- set_fact: log_dir={{ es_log_dir }}/{{instance_suffix}}
-
-- set_fact: work_dir={{ es_work_dir }}/{{instance_suffix}}
+- set_fact: work_dir={{ es_work_dir }}/{{es_instance_name}}
 
 #Create required directories
 - name: Create Directories
@@ -35,7 +31,7 @@
     - "{{conf_dir}}"
     - "{{plugin_dir}}"
 
-- set_fact: data_dirs={{ es_data_dirs | append_to_list('/'+instance_suffix) }}
+- set_fact: data_dirs={{ es_data_dirs | append_to_list('/'+es_instance_name) }}
 
 - name: Create Data Directories
   file: path={{ item }} state=directory owner={{ es_user }} group={{ es_group }}
